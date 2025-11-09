@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Finance Quest - Kids Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            touch-action: none;
+        }
+        
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .title {
+            font-size: clamp(32px, 8vw, 72px);
+            color: #fff;
+            text-shadow: 4px 4px 0px #ff6b9d, 6px 6px 0px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .subtitle {
+            font-size: clamp(18px, 4vw, 28px);
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .credits {
+            font-size: clamp(14px, 3vw, 18px);
+            color: #fff;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .start-btn {
+            padding: clamp(15px, 3vw, 20px) clamp(40px, 8vw, 60px);
+            font-size: clamp(20px, 4vw, 28px);
+            background: #fff;
+            color: #f5576c;
+            border: 4px solid #ff6b9d;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 8px 0 #d63e5a;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #d63e5a;
+        }
+        
+        .start-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 0 #d63e5a;
+        }
+        
+        #character-creator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 30px;
+            border: 6px solid #ff6b9d;
+            z-index: 2500;
+            display: none;
+            max-width: 90%;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        #character-creator h2 {
+            text-align: center;
+            font-size: clamp(24px, 5vw, 36px);
+            color: #f5576c;
+            text-shadow: 2px 2px 0 #fff;
+            margin-bottom: 20px;
+        }
+        
+        .creator-section {
+            margin: 20px 0;
+        }
+        
+        .creator-label {
+            font-size: clamp(16px, 3.5vw, 20px);
+            margin-bottom: 10px;
+            display: block;
+            color: #f5576c;
+            font-weight: bold;
+        }
+        
+        .creator-input {
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #333;
+            border: 3px solid #ff6b9d;
+            border-radius: 15px;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: clamp(14px, 3vw, 18px);
+        }
+        
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .color-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 4px solid #ff6b9d;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-btn.active {
+            border-width: 6px;
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+            transform: scale(1.15);
+        }
+        
+        .create-btn {
+            width: 100%;
+            padding: 15px;
+            background: #f5576c;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            margin-top: 20px;
+            box-shadow: 0 6px 0 #d63e5a;
+            transition: all 0.3s;
+        }
+        
+        .create-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #d63e5a;
+        }
+        
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #credits-overlay {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: white;
+            font-size: clamp(10px, 2.5vw, 14px);
+            opacity: 0.8;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 100;
+        }
+        
+        #ui-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(245, 87, 108, 0.9);
+            padding: clamp(10px, 2vw, 15px);
+            border-radius: 20px;
+            max-width: 280px;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        #level-info {
+            font-size: clamp(16px, 3.5vw, 20px);
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        #timer-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #f5576c;
+            padding: clamp(12px, 3vw, 20px);
+            border-radius: 20px;
+            font-size: clamp(24px, 5vw, 40px);
+            font-weight: bold;
+            border: 4px solid #ff6b9d;
+            min-width: clamp(80px, 15vw, 120px);
+            text-align: center;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        #timer-display.warning {
+            background: #ff6b6b;
+            color: #fff;
+            animation: timer-shake 0.5s infinite;
+        }
+        
+        @keyframes timer-shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        /* Mobile Controls */
+        #mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .control-pad {
+            position: relative;
+            width: clamp(120px, 25vw, 150px);
+            height: clamp(120px, 25vw, 150px);
+            pointer-events: auto;
+        }
+        
+        .control-btn {
+            position: absolute;
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #ff6b9d;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(20px, 4vw, 28px);
+            color: #f5576c;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            touch-action: none;
+            pointer-events: auto;
+            z-index: 100;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+            background: #ff6b9d;
+            color: #fff;
+        }
+        
+        .control-btn.up { top: 0; left: 50%; transform: translateX(-50%); }
+        .control-btn.down { bottom: 0; left: 50%; transform: translateX(-50%); }
+        .control-btn.left { left: 0; top: 50%; transform: translateY(-50%); }
+        .control-btn.right { right: 0; top: 50%; transform: translateY(-50%); }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: auto;
+        }
+        
+        .action-btn {
+            width: clamp(60px, 12vw, 80px);
+            height: clamp(60px, 12vw, 80px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 4px solid #ff6b9d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(14px, 3vw, 18px);
+            color: #f5576c;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            touch-action: none;
+            pointer-events: auto;
+            z-index: 100;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.95);
+            background: #ff6b9d;
+            color: #fff;
+        }
+        
+        #puzzle-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+            padding: clamp(15px, 4vw, 30px);
+            border-radius: 25px;
+            max-width: 95%;
+            width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            display: none;
+            border: 6px solid #ff6b9d;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            z-index: 200;
+        }
+        
+        #puzzle-box h2 {
+            color: #f5576c;
+            text-align: center;
+            font-size: clamp(20px, 4.5vw, 28px);
+            text-shadow: 2px 2px 0 #fff;
+            margin-bottom: 15px;
+        }
+        
+        #puzzle-question {
+            margin: 15px 0;
+            line-height: 1.6;
+            font-size: clamp(14px, 3.5vw, 18px);
+            color: #333;
+        }
+        
+        .puzzle-option {
+            background: #fff;
+            border: 4px solid #ff6b9d;
+            padding: clamp(12px, 3vw, 15px);
+            margin: 10px 0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: clamp(14px, 3.5vw, 16px);
+            box-shadow: 0 4px 0 #d63e5a;
+        }
+        
+        .puzzle-option:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #d63e5a;
+        }
+        
+        .puzzle-option.correct {
+            background: #51cf66;
+            border-color: #37b24d;
+            animation: correct-pop 0.5s;
+        }
+        
+        .puzzle-option.incorrect {
+            background: #ff6b6b;
+            border-color: #fa5252;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes correct-pop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        #puzzle-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            font-size: clamp(14px, 3.5vw, 16px);
+        }
+        
+        #puzzle-feedback.correct {
+            background: #51cf66;
+            color: #fff;
+            display: block;
+        }
+        
+        #puzzle-feedback.incorrect {
+            background: #ff6b6b;
+            color: #fff;
+            display: block;
+        }
+        
+        #next-level-btn {
+            width: 100%;
+            padding: 15px;
+            background: #f5576c;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: clamp(16px, 4vw, 20px);
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            margin-top: 15px;
+            box-shadow: 0 6px 0 #d63e5a;
+            display: none;
+        }
+        
+        #next-level-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #d63e5a;
+        }
+        
+        .interaction-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #f5576c;
+            padding: 15px 30px;
+            border-radius: 25px;
+            display: none;
+            font-size: clamp(16px, 4vw, 20px);
+            border: 4px solid #ff6b9d;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: pulse 1.5s infinite;
+            font-weight: bold;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        
+        #game-over-screen, #victory-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #fff;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            z-index: 1500;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        #game-over-screen h1, #victory-screen h1 {
+            font-size: clamp(36px, 8vw, 72px);
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+        
+        .restart-btn {
+            padding: clamp(15px, 3vw, 20px) clamp(40px, 8vw, 60px);
+            font-size: clamp(18px, 4vw, 24px);
+            background: #fff;
+            color: #f5576c;
+            border: 4px solid #ff6b9d;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 6px 0 #d63e5a;
+        }
+        
+        .restart-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #d63e5a;
+        }
+        
+        .instruction {
+            font-size: clamp(12px, 3vw, 14px);
+            margin: 3px 0;
+            opacity: 0.95;
+        }
+        
+        .floating-text {
+            position: absolute;
+            color: #fff;
+            font-size: clamp(20px, 5vw, 32px);
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 2s ease-out forwards;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-100px); }
+        }
+        
+        /* Hide desktop instructions on mobile */
+        @media (max-width: 768px) {
+            .desktop-only {
+                display: none !important;
+            }
+        }
+        
+        /* Hide mobile controls on desktop */
+        @media (min-width: 769px) {
+            #mobile-controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="start-screen">
+        <div class="title">💰 FINANCE QUEST 💰</div>
+        <div class="subtitle">🎮 Learn Money Skills! 🎮</div>
+        <div class="credits">Made by Rishab Ohri</div>
+        <button class="start-btn" onclick="showCharacterCreator()">START ADVENTURE</button>
+    </div>
+    
+    <div id="character-creator">
+        <h2>✨ Create Your Character ✨</h2>
+        
+        <div class="creator-section">
+            <label class="creator-label">Your Name:</label>
+            <input type="text" id="character-name" class="creator-input" placeholder="Enter your name..." maxlength="15">
+        </div>
+        
+        <div class="creator-section">
+            <label class="creator-label">Shirt Color:</label>
+            <div class="color-options" id="shirt-colors">
+                <div class="color-btn active" style="background: #ff6b9d;" data-color="0xff6b9d"></div>
+                <div class="color-btn" style="background: #4ecdc4;" data-color="0x4ecdc4"></div>
+                <div class="color-btn" style="background: #ffd93d;" data-color="0xffd93d"></div>
+                <div class="color-btn" style="background: #a8e6cf;" data-color="0xa8e6cf"></div>
+                <div class="color-btn" style="background: #ff8b94;" data-color="0xff8b94"></div>
+                <div class="color-btn" style="background: #95e1d3;" data-color="0x95e1d3"></div>
+            </div>
+        </div>
+        
+        <div class="creator-section">
+            <label class="creator-label">Pants Color:</label>
+            <div class="color-options" id="pants-colors">
+                <div class="color-btn active" style="background: #6c5ce7;" data-color="0x6c5ce7"></div>
+                <div class="color-btn" style="background: #0984e3;" data-color="0x0984e3"></div>
+                <div class="color-btn" style="background: #2d3436;" data-color="0x2d3436"></div>
+                <div class="color-btn" style="background: #fdcb6e;" data-color="0xfdcb6e"></div>
+                <div class="color-btn" style="background: #00b894;" data-color="0x00b894"></div>
+                <div class="color-btn" style="background: #e17055;" data-color="0xe17055"></div>
+            </div>
+        </div>
+        
+        <button class="create-btn" onclick="startGameWithCharacter()">START LEARNING! 🚀</button>
+    </div>
+    
+    <div id="canvas-container"></div>
+    
+    <div id="credits-overlay">Made by Rishab Ohri</div>
+    
+    <div id="timer-display">30</div>
+    
+    <div id="ui-overlay">
+        <div id="level-info">Level <span id="current-level">1</span> / 6</div>
+        <h2 style="color: #fff; margin: 10px 0; font-size: clamp(18px, 4vw, 24px);">💰 Finance Quest</h2>
+        <p class="instruction desktop-only">WASD - Move</p>
+        <p class="instruction desktop-only">Arrow Keys - Look</p>
+        <p class="instruction desktop-only">SPACE - Jump</p>
+        <p class="instruction">Find the piggy bank! 🐷</p>
+    </div>
+    
+    <div id="mobile-controls">
+        <div class="control-pad">
+            <div class="control-btn up" data-key="w">↑</div>
+            <div class="control-btn down" data-key="s">↓</div>
+            <div class="control-btn left" data-key="a">←</div>
+            <div class="control-btn right" data-key="d">→</div>
+        </div>
+        <div class="action-buttons">
+            <div class="action-btn" data-key="space">JUMP</div>
+            <div class="action-btn" data-key="e">TALK</div>
+        </div>
+    </div>
+    
+    <div class="interaction-prompt" id="interaction-prompt">Tap TALK to answer! 💭</div>
+    
+    <div id="puzzle-box">
+        <h2 id="puzzle-title">Question</h2>
+        <div id="puzzle-question"></div>
+        <div id="puzzle-options"></div>
+        <div id="puzzle-feedback"></div>
+        <button id="next-level-btn">Next Level →</button>
+    </div>
+    
+    <div id="game-over-screen">
+        <h1>⏰ Time's Up! ⏰</h1>
+        <p style="font-size: clamp(18px, 4vw, 24px);">Don't worry, learning takes practice!</p>
+        <button class="restart-btn" onclick="location.reload()">Try Again 🔄</button>
+    </div>
+    
+    <div id="victory-screen">
+        <h1>🎉 YOU WIN! 🎉</h1>
+        <p style="font-size: clamp(20px, 4.5vw, 28px);">You're a Finance Expert!</p>
+        <p style="font-size: clamp(16px, 3.5vw, 20px); margin-top: 20px;">Great job learning about money! 💰</p>
+        <button class="restart-btn" onclick="location.reload()">Play Again 🔄</button>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Game state
+        let currentLevel = 1;
+        const totalLevels = 6;
+        let levelSolved = false;
+        let puzzleTimer = null;
+        let timeRemaining = 0;
+        let gameStarted = false;
+        
+        // Player controls
+        const player = {
+            position: new THREE.Vector3(0, 0, 12),
+            velocity: new THREE.Vector3(0, 0, 0),
+            speed: 0.12,
+            verticalVelocity: 0,
+            isJumping: false,
+            gravity: -0.02,
+            jumpStrength: 0.3
+        };
+        
+        const keys = {};
+        let mouseX = 0;
+        let nearbyPuzzle = null;
+        let scene, camera, renderer;
+        let playerCharacter = null;
+        let cameraOffset = new THREE.Vector3(0, 3, 6);
+        
+        // Character customization
+        let characterName = "Player";
+        let shirtColor = 0xff6b9d;
+        let pantsColor = 0x6c5ce7;
+        
+        // Mobile touch controls
+        const touchKeys = {};
+        
+        // Finance questions for kids (ages 10-12)
+        const puzzles = [
+            {
+                title: "Level 1: What is Money?",
+                time: 30,
+                question: "Why do we use money instead of trading things directly?",
+                options: [
+                    { text: "A) Because money is prettier", correct: false },
+                    { text: "B) It's easier than carrying lots of items to trade", correct: true },
+                    { text: "C) Money is magic", correct: false },
+                    { text: "D) We don't need money", correct: false }
+                ],
+                explanation: "Correct! Money makes trading easier - imagine carrying 10 chickens to buy a bike! 🐔"
+            },
+            {
+                title: "Level 2: Saving Money",
+                time: 35,
+                question: "You get $10 for your birthday. What's the BEST thing to do?",
+                options: [
+                    { text: "A) Spend it all right away on candy", correct: false },
+                    { text: "B) Save some and spend some", correct: true },
+                    { text: "C) Hide it under your pillow forever", correct: false },
+                    { text: "D) Give it all away", correct: false }
+                ],
+                explanation: "Great choice! Saving some money helps you buy bigger things later! 🎯"
+            },
+            {
+                title: "Level 3: Wants vs Needs",
+                time: 30,
+                question: "Which of these is a NEED (something you must have)?",
+                options: [
+                    { text: "A) Video games", correct: false },
+                    { text: "B) Healthy food", correct: true },
+                    { text: "C) Toys", correct: false },
+                    { text: "D) Ice cream", correct: false }
+                ],
+                explanation: "Perfect! Needs are things we must have to live, like food and shelter! 🏠"
+            },
+            {
+                title: "Level 4: Earning Money",
+                time: 35,
+                question: "What's a good way for kids to earn money?",
+                options: [
+                    { text: "A) Doing chores at home", correct: true },
+                    { text: "B) Taking money from others", correct: false },
+                    { text: "C) Wishing for it", correct: false },
+                    { text: "D) Finding it on the street", correct: false }
+                ],
+                explanation: "Awesome! Working hard to earn money teaches responsibility! 💪"
+            },
+            {
+                title: "Level 5: Smart Shopping",
+                time: 40,
+                question: "A toy costs $20, but you only have $15. What should you do?",
+                options: [
+                    { text: "A) Cry until someone buys it", correct: false },
+                    { text: "B) Save more money until you can afford it", correct: true },
+                    { text: "C) Steal it", correct: false },
+                    { text: "D) Buy it anyway and worry later", correct: false }
+                ],
+                explanation: "Smart thinking! Saving up teaches patience and planning! 🌟"
+            },
+            {
+                title: "Level 6: Banking Basics",
+                time: 35,
+                question: "What does a bank do with your money?",
+                options: [
+                    { text: "A) Throws it away", correct: false },
+                    { text: "B) Keeps it safe and may even grow it a tiny bit", correct: true },
+                    { text: "C) Uses it to buy toys", correct: false },
+                    { text: "D) Gives it to other kids", correct: false }
+                ],
+                explanation: "Excellent! Banks keep money safe and sometimes pay you interest! 🏦"
+            }
+        ];
+        
+        function showCharacterCreator() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('character-creator').style.display = 'block';
+            
+            // Set up color selection
+            document.querySelectorAll('#shirt-colors .color-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#shirt-colors .color-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    shirtColor = parseInt(this.getAttribute('data-color'));
+                });
+            });
+            
+            document.querySelectorAll('#pants-colors .color-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#pants-colors .color-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    pantsColor = parseInt(this.getAttribute('data-color'));
+                });
+            });
+        }
+        
+        function startGameWithCharacter() {
+            const nameInput = document.getElementById('character-name').value.trim();
+            if (nameInput) {
+                characterName = nameInput;
+            }
+            
+            document.getElementById('character-creator').style.display = 'none';
+            gameStarted = true;
+            initGame();
+        }
+        
+        function initGame() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB);
+            scene.fog = new THREE.Fog(0x87CEEB, 10, 40);
+            
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 2, 8);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            
+            createLevel(currentLevel);
+            setupControls();
+            animate();
+        }
+        
+        function createLevel(levelNum) {
+            // Clear previous level
+            while(scene.children.length > 0) { 
+                scene.remove(scene.children[0]); 
+            }
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 15, 10);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            
+            // Colorful floor
+            const floorGeometry = new THREE.PlaneGeometry(40, 40);
+            const floorMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x90EE90,
+                roughness: 0.8
+            });
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+            
+            // Grid with fun colors
+            const gridHelper = new THREE.GridHelper(40, 40, 0xff6b9d, 0xffd93d);
+            gridHelper.position.y = 0.01;
+            scene.add(gridHelper);
+            
+            // Colorful walls
+            const wallMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xa8e6cf,
+                roughness: 0.9
+            });
+            
+            [-20, 20].forEach(x => {
+                const wall = new THREE.Mesh(
+                    new THREE.BoxGeometry(1, 5, 40),
+                    wallMaterial
+                );
+                wall.position.set(x, 2.5, 0);
+                wall.receiveShadow = true;
+                wall.castShadow = true;
+                scene.add(wall);
+            });
+            
+            [-20, 20].forEach(z => {
+                const wall = new THREE.Mesh(
+                    new THREE.BoxGeometry(40, 5, 1),
+                    wallMaterial
+                );
+                wall.position.set(0, 2.5, z);
+                wall.receiveShadow = true;
+                wall.castShadow = true;
+                scene.add(wall);
+            });
+            
+            // Add fun decorations
+            addDecorations();
+            
+            // Piggy bank (puzzle terminal)
+            const piggyBank = createPiggyBank();
+            const positions = [
+                [0, 0.8, -15],
+                [15, 0.8, 15],
+                [-15, 0.8, -15],
+                [15, 0.8, -15],
+                [0, 0.8, 15],
+                [-15, 0.8, 15]
+            ];
+            
+            piggyBank.position.set(...positions[levelNum - 1]);
+            piggyBank.userData.isPuzzle = true;
+            scene.add(piggyBank);
+            
+            // Glowing light on piggy bank
+            const light = new THREE.PointLight(0xffd93d, 1, 8);
+            light.position.copy(piggyBank.position);
+            scene.add(light);
+            
+            // Particles
+            addParticles();
+            
+            // Reset player
+            player.position.set(0, 0, 12);
+            
+            // Create player character
+            if (playerCharacter) {
+                scene.remove(playerCharacter);
+            }
+            playerCharacter = createPlayerCharacter();
+            playerCharacter.position.copy(player.position);
+            playerCharacter.position.y = 0;
+            scene.add(playerCharacter);
+            
+            levelSolved = false;
+        }
+        
+        function createPiggyBank() {
+            const group = new THREE.Group();
+            
+            // Body
+            const body = new THREE.Mesh(
+                new THREE.SphereGeometry(0.6, 16, 16),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0xffb3d9,
+                    roughness: 0.4
+                })
+            );
+            body.scale.set(1, 0.8, 1);
+            body.castShadow = true;
+            group.add(body);
+            
+            // Snout
+            const snout = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.25, 0.25, 0.2, 16),
+                new THREE.MeshStandardMaterial({ color: 0xffb3d9 })
+            );
+            snout.rotation.x = Math.PI / 2;
+            snout.position.set(0, 0, 0.6);
+            group.add(snout);
+            
+            // Nostrils
+            [0.1, -0.1].forEach(x => {
+                const nostril = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.05),
+                    new THREE.MeshStandardMaterial({ color: 0xff69b4 })
+                );
+                nostril.position.set(x, 0, 0.7);
+                group.add(nostril);
+            });
+            
+            // Eyes
+            [-0.2, 0.2].forEach(x => {
+                const eye = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.08),
+                    new THREE.MeshStandardMaterial({ color: 0x000000 })
+                );
+                eye.position.set(x, 0.3, 0.5);
+                group.add(eye);
+            });
+            
+            // Ears
+            [-0.4, 0.4].forEach(x => {
+                const ear = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.15, 0.3, 8),
+                    new THREE.MeshStandardMaterial({ color: 0xffb3d9 })
+                );
+                ear.position.set(x, 0.6, 0);
+                ear.rotation.z = x > 0 ? Math.PI / 6 : -Math.PI / 6;
+                group.add(ear);
+            });
+            
+            // Legs
+            [[-0.3, -0.3], [0.3, -0.3], [-0.3, 0.3], [0.3, 0.3]].forEach(([x, z]) => {
+                const leg = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.1, 0.1, 0.4),
+                    new THREE.MeshStandardMaterial({ color: 0xffb3d9 })
+                );
+                leg.position.set(x, -0.6, z);
+                group.add(leg);
+            });
+            
+            // Coin slot
+            const slot = new THREE.Mesh(
+                new THREE.BoxGeometry(0.3, 0.05, 0.1),
+                new THREE.MeshStandardMaterial({ color: 0x000000 })
+            );
+            slot.position.set(0, 0.5, 0);
+            group.add(slot);
+            
+            // Rotating coin above
+            const coin = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.2, 0.2, 0.05, 16),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0xffd700,
+                    metalness: 0.8,
+                    roughness: 0.2
+                })
+            );
+            coin.position.y = 1.2;
+            coin.rotation.x = Math.PI / 2;
+            group.add(coin);
+            group.userData.coin = coin;
+            
+            return group;
+        }
+        
+        function createPlayerCharacter() {
+            const group = new THREE.Group();
+            
+            // Body
+            const torso = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.3, 0.35, 0.8, 8),
+                new THREE.MeshStandardMaterial({ color: shirtColor })
+            );
+            torso.position.y = 0.4;
+            torso.castShadow = true;
+            group.add(torso);
+            
+            // Head
+            const head = new THREE.Mesh(
+                new THREE.SphereGeometry(0.25, 8, 8),
+                new THREE.MeshStandardMaterial({ color: 0xffdbac })
+            );
+            head.position.y = 1.05;
+            head.castShadow = true;
+            group.add(head);
+            
+            // Hair
+            const hair = new THREE.Mesh(
+                new THREE.SphereGeometry(0.27, 8, 6),
+                new THREE.MeshStandardMaterial({ color: 0x654321 })
+            );
+            hair.position.y = 1.15;
+            hair.scale.y = 0.6;
+            group.add(hair);
+            
+            // Eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.04, 4, 4);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.1, 1.05, 0.22);
+            group.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.1, 1.05, 0.22);
+            group.add(rightEye);
+            
+            // Smile
+            const smileGeometry = new THREE.TorusGeometry(0.08, 0.02, 8, 16, Math.PI);
+            const smileMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            const smile = new THREE.Mesh(smileGeometry, smileMaterial);
+            smile.position.set(0, 0.95, 0.22);
+            smile.rotation.x = Math.PI;
+            group.add(smile);
+            
+            // Arms
+            const armGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.6, 6);
+            const armMaterial = new THREE.MeshStandardMaterial({ color: shirtColor });
+            
+            const leftArm = new THREE.Mesh(armGeometry, armMaterial);
+            leftArm.position.set(-0.35, 0.5, 0);
+            leftArm.rotation.z = Math.PI / 6;
+            leftArm.castShadow = true;
+            group.add(leftArm);
+            group.userData.leftArm = leftArm;
+            
+            const rightArm = new THREE.Mesh(armGeometry, armMaterial);
+            rightArm.position.set(0.35, 0.5, 0);
+            rightArm.rotation.z = -Math.PI / 6;
+            rightArm.castShadow = true;
+            group.add(rightArm);
+            group.userData.rightArm = rightArm;
+            
+            // Legs
+            const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 6);
+            const legMaterial = new THREE.MeshStandardMaterial({ color: pantsColor });
+            
+            const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
+            leftLeg.position.set(-0.15, -0.4, 0);
+            leftLeg.castShadow = true;
+            group.add(leftLeg);
+            group.userData.leftLeg = leftLeg;
+            
+            const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
+            rightLeg.position.set(0.15, -0.4, 0);
+            rightLeg.castShadow = true;
+            group.add(rightLeg);
+            group.userData.rightLeg = rightLeg;
+            
+            // Name label
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(0, 0, 256, 64);
+            ctx.fillStyle = '#f5576c';
+            ctx.font = 'bold 28px Comic Sans MS';
+            ctx.textAlign = 'center';
+            ctx.fillText(characterName, 128, 42);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const labelMaterial = new THREE.SpriteMaterial({ map: texture });
+            const label = new THREE.Sprite(labelMaterial);
+            label.position.y = 1.6;
+            label.scale.set(2, 0.5, 1);
+            group.add(label);
+            
+            return group;
+        }
+        
+        function addDecorations() {
+            // Colorful boxes (presents/coins)
+            const decorations = [
+                { color: 0xffd93d, pos: [-10, 0.3, -10], emoji: '💰' },
+                { color: 0xff6b9d, pos: [10, 0.3, 10], emoji: '🎁' },
+                { color: 0x4ecdc4, pos: [-8, 0.3, 8], emoji: '💎' },
+                { color: 0xa8e6cf, pos: [8, 0.3, -8], emoji: '🏦' }
+            ];
+            
+            decorations.forEach(dec => {
+                const box = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.6, 0.6, 0.6),
+                    new THREE.MeshStandardMaterial({ 
+                        color: dec.color,
+                        roughness: 0.4
+                    })
+                );
+                box.position.set(...dec.pos);
+                box.castShadow = true;
+                scene.add(box);
+                
+                // Emoji label
+                const canvas = document.createElement('canvas');
+                canvas.width = 128;
+                canvas.height = 128;
+                const ctx = canvas.getContext('2d');
+                ctx.font = '80px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(dec.emoji, 64, 90);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
+                sprite.position.set(dec.pos[0], dec.pos[1] + 0.8, dec.pos[2]);
+                sprite.scale.set(0.8, 0.8, 1);
+                scene.add(sprite);
+            });
+        }
+        
+        function addParticles() {
+            const geometry = new THREE.BufferGeometry();
+            const count = 150;
+            const positions = new Float32Array(count * 3);
+            
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 40;
+                positions[i + 1] = Math.random() * 10;
+                positions[i + 2] = (Math.random() - 0.5) * 40;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const material = new THREE.PointsMaterial({
+                color: 0xffd93d,
+                size: 0.15,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+        
+        function setupControls() {
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                if (document.getElementById('puzzle-box').style.display === 'block') {
+                    if (e.key === 'Escape') {
+                        closePuzzle();
+                    }
+                    return;
+                }
+                
+                keys[e.key.toLowerCase()] = true;
+                keys[e.key] = true;
+                
+                if (e.key === ' ' && !player.isJumping) {
+                    e.preventDefault();
+                    player.isJumping = true;
+                    player.verticalVelocity = player.jumpStrength;
+                    createFloatingText('🚀', player.position);
+                }
+                
+                if (e.key.toLowerCase() === 'e' && nearbyPuzzle && !levelSolved) {
+                    e.preventDefault();
+                    openPuzzle();
+                }
+                
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    e.preventDefault();
+                }
+            });
+            
+            document.addEventListener('keyup', (e) => {
+                keys[e.key.toLowerCase()] = false;
+                keys[e.key] = false;
+            });
+            
+            // Mobile touch controls
+            document.querySelectorAll('.control-btn, .action-btn').forEach(btn => {
+                // Touch events
+                btn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const key = btn.getAttribute('data-key');
+                    
+                    if (document.getElementById('puzzle-box').style.display === 'block') {
+                        return;
+                    }
+                    
+                    if (key === 'space' && !player.isJumping) {
+                        player.isJumping = true;
+                        player.verticalVelocity = player.jumpStrength;
+                        createFloatingText('🚀', player.position);
+                    } else if (key === 'e' && nearbyPuzzle && !levelSolved) {
+                        openPuzzle();
+                    } else {
+                        touchKeys[key] = true;
+                    }
+                });
+                
+                btn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const key = btn.getAttribute('data-key');
+                    touchKeys[key] = false;
+                });
+                
+                // Mouse events for testing on desktop
+                btn.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const key = btn.getAttribute('data-key');
+                    
+                    if (document.getElementById('puzzle-box').style.display === 'block') {
+                        return;
+                    }
+                    
+                    if (key === 'space' && !player.isJumping) {
+                        player.isJumping = true;
+                        player.verticalVelocity = player.jumpStrength;
+                        createFloatingText('🚀', player.position);
+                    } else if (key === 'e' && nearbyPuzzle && !levelSolved) {
+                        openPuzzle();
+                    } else {
+                        touchKeys[key] = true;
+                    }
+                });
+                
+                btn.addEventListener('mouseup', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const key = btn.getAttribute('data-key');
+                    touchKeys[key] = false;
+                });
+            });
+            
+            // Mouse controls for desktop
+            document.addEventListener('mousemove', (e) => {
+                if (document.pointerLockElement === renderer.domElement) {
+                    mouseX += e.movementX * 0.002;
+                }
+            });
+            
+            renderer.domElement.addEventListener('click', () => {
+                if (document.getElementById('puzzle-box').style.display !== 'block' &&
+                    window.innerWidth > 768) {
+                    renderer.domElement.requestPointerLock();
+                }
+            });
+        }
+        
+        function openPuzzle() {
+            const puzzle = puzzles[currentLevel - 1];
+            const puzzleBox = document.getElementById('puzzle-box');
+            
+            puzzleBox.style.display = 'block';
+            document.getElementById('puzzle-title').textContent = puzzle.title;
+            document.getElementById('puzzle-question').textContent = puzzle.question;
+            document.getElementById('puzzle-feedback').style.display = 'none';
+            document.getElementById('next-level-btn').style.display = 'none';
+            
+            if (document.pointerLockElement === renderer.domElement) {
+                document.exitPointerLock();
+            }
+            
+            timeRemaining = puzzle.time;
+            document.getElementById('timer-display').style.display = 'block';
+            updateTimerDisplay();
+            startTimer();
+            
+            const optionsContainer = document.getElementById('puzzle-options');
+            optionsContainer.innerHTML = '';
+            
+            puzzle.options.forEach(option => {
+                const div = document.createElement('div');
+                div.className = 'puzzle-option';
+                div.textContent = option.text;
+                div.onclick = () => checkAnswer(option.correct, div, puzzle.explanation);
+                optionsContainer.appendChild(div);
+            });
+        }
+        
+        function closePuzzle() {
+            document.getElementById('puzzle-box').style.display = 'none';
+            stopTimer();
+            document.getElementById('timer-display').style.display = 'none';
+            if (document.pointerLockElement === renderer.domElement) {
+                document.exitPointerLock();
+            }
+        }
+        
+        function startTimer() {
+            stopTimer();
+            puzzleTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    gameOver();
+                }
+            }, 1000);
+        }
+        
+        function stopTimer() {
+            if (puzzleTimer) {
+                clearInterval(puzzleTimer);
+                puzzleTimer = null;
+            }
+        }
+        
+        function updateTimerDisplay() {
+            const display = document.getElementById('timer-display');
+            display.textContent = timeRemaining;
+            
+            if (timeRemaining <= 10) {
+                display.classList.add('warning');
+            } else {
+                display.classList.remove('warning');
+            }
+        }
+        
+        function checkAnswer(correct, element, explanation) {
+            stopTimer();
+            const allOptions = document.querySelectorAll('.puzzle-option');
+            allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+            
+            const feedback = document.getElementById('puzzle-feedback');
+            
+            if (correct) {
+                element.classList.add('correct');
+                feedback.className = 'correct';
+                feedback.textContent = '✅ ' + explanation;
+                feedback.style.display = 'block';
+                levelSolved = true;
+                createFloatingText('⭐ GREAT JOB!', player.position);
+                showNextLevelButton();
+            } else {
+                element.classList.add('incorrect');
+                feedback.className = 'incorrect';
+                feedback.textContent = '❌ Oops! Try to think about it more carefully!';
+                feedback.style.display = 'block';
+                setTimeout(() => {
+                    gameOver();
+                }, 1500);
+            }
+        }
+        
+        function showNextLevelButton() {
+            const nextBtn = document.getElementById('next-level-btn');
+            
+            if (currentLevel < totalLevels) {
+                nextBtn.textContent = 'Next Level →';
+                nextBtn.style.display = 'block';
+                nextBtn.onclick = () => {
+                    currentLevel++;
+                    document.getElementById('current-level').textContent = currentLevel;
+                    createLevel(currentLevel);
+                    closePuzzle();
+                    createFloatingText('🎉 LEVEL UP!', player.position);
+                };
+            } else {
+                nextBtn.textContent = '🎉 FINISH!';
+                nextBtn.style.display = 'block';
+                nextBtn.onclick = () => {
+                    closePuzzle();
+                    document.getElementById('victory-screen').style.display = 'flex';
+                };
+            }
+        }
+        
+        function gameOver() {
+            stopTimer();
+            document.getElementById('game-over-screen').style.display = 'flex';
+            closePuzzle();
+        }
+        
+        function createFloatingText(text, worldPos) {
+            const screenPos = worldPos.clone();
+            screenPos.project(camera);
+            
+            const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (-screenPos.y * 0.5 + 0.5) * window.innerHeight;
+            
+            const div = document.createElement('div');
+            div.className = 'floating-text';
+            div.textContent = text;
+            div.style.left = x + 'px';
+            div.style.top = y + 'px';
+            document.body.appendChild(div);
+            
+            setTimeout(() => div.remove(), 2000);
+        }
+        
+        function animate() {
+            if (!gameStarted) return;
+            requestAnimationFrame(animate);
+            
+            // Player movement
+            player.velocity.set(0, 0, 0);
+            
+            if (document.getElementById('puzzle-box').style.display !== 'block') {
+                // Keyboard + touch controls
+                if (keys['w'] || touchKeys['w']) player.velocity.z = player.speed;
+                if (keys['s'] || touchKeys['s']) player.velocity.z = -player.speed;
+                if (keys['a'] || touchKeys['a']) player.velocity.x = -player.speed;
+                if (keys['d'] || touchKeys['d']) player.velocity.x = player.speed;
+                
+                const lookSpeed = 0.05;
+                if (keys['ArrowLeft']) mouseX += lookSpeed;
+                if (keys['ArrowRight']) mouseX -= lookSpeed;
+            }
+            
+            const forward = new THREE.Vector3(0, 0, -1);
+            forward.applyQuaternion(camera.quaternion);
+            forward.y = 0;
+            forward.normalize();
+            
+            const right = new THREE.Vector3(1, 0, 0);
+            right.applyQuaternion(camera.quaternion);
+            right.y = 0;
+            right.normalize();
+            
+            player.position.add(forward.multiplyScalar(player.velocity.z));
+            player.position.add(right.multiplyScalar(player.velocity.x));
+            
+            // Jumping
+            if (player.isJumping || player.position.y > 0) {
+                player.verticalVelocity += player.gravity;
+                player.position.y += player.verticalVelocity;
+                
+                if (player.position.y <= 0) {
+                    player.position.y = 0;
+                    player.verticalVelocity = 0;
+                    player.isJumping = false;
+                }
+            }
+            
+            // Bounds
+            player.position.x = Math.max(-18, Math.min(18, player.position.x));
+            player.position.z = Math.max(-18, Math.min(18, player.position.z));
+            
+            // Update character
+            if (playerCharacter) {
+                playerCharacter.position.copy(player.position);
+                playerCharacter.position.y = 0;
+                
+                if (player.velocity.x !== 0 || player.velocity.z !== 0) {
+                    const angle = Math.atan2(player.velocity.x, player.velocity.z);
+                    playerCharacter.rotation.y = angle;
+                    
+                    const time = Date.now() * 0.01;
+                    playerCharacter.userData.leftLeg.rotation.x = Math.sin(time) * 0.5;
+                    playerCharacter.userData.rightLeg.rotation.x = -Math.sin(time) * 0.5;
+                    playerCharacter.userData.leftArm.rotation.x = -Math.sin(time) * 0.3;
+                    playerCharacter.userData.rightArm.rotation.x = Math.sin(time) * 0.3;
+                } else {
+                    playerCharacter.userData.leftLeg.rotation.x = 0;
+                    playerCharacter.userData.rightLeg.rotation.x = 0;
+                    playerCharacter.userData.leftArm.rotation.x = 0;
+                    playerCharacter.userData.rightArm.rotation.x = 0;
+                }
+                
+                if (player.isJumping) {
+                    playerCharacter.position.y = player.position.y;
+                }
+            }
+            
+            // Camera
+            const cameraTarget = player.position.clone();
+            cameraTarget.y += 1;
+            
+            const cameraPosition = player.position.clone();
+            const offset = new THREE.Vector3(
+                Math.sin(mouseX) * cameraOffset.z,
+                cameraOffset.y,
+                Math.cos(mouseX) * cameraOffset.z
+            );
+            cameraPosition.add(offset);
+            
+            camera.position.lerp(cameraPosition, 0.1);
+            camera.lookAt(cameraTarget);
+            
+            // Check for puzzles
+            nearbyPuzzle = null;
+            scene.traverse((obj) => {
+                if (obj.userData.isPuzzle) {
+                    const dist = player.position.distanceTo(obj.position);
+                    if (dist < 3 && !levelSolved) {
+                        nearbyPuzzle = obj;
+                        // Rotate coin
+                        if (obj.userData.coin) {
+                            obj.userData.coin.rotation.z += 0.05;
+                        }
+                    }
+                }
+            });
+            
+            document.getElementById('interaction-prompt').style.display = nearbyPuzzle ? 'block' : 'none';
+            
+            // Animate particles
+            scene.traverse((obj) => {
+                if (obj instanceof THREE.Points) {
+                    obj.rotation.y += 0.001;
+                }
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        window.addEventListener('resize', () => {
+            if (!camera || !renderer) return;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
+
