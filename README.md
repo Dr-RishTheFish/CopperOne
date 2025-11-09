@@ -4,15 +4,15 @@ A financial education app for kids, built with React and Firebase. Help children
 
 ## Features
 
-- 💰 **Balance Tracking** - Track income, expenses, and savings
-- 🎯 **Goals System** - Set and achieve financial goals with progress tracking
-- ✅ **Chores** - Complete chores to earn points and rewards
-- 🎮 **Finance Quest Game** - Learn financial concepts through interactive gameplay
-- 🤖 **Penny AI Assistant** - Get kid-friendly financial advice from Penny (powered by local Ollama)
-- 📚 **Learning Modules** - Access Khan Academy financial literacy content
-- 🏆 **Rewards System** - Earn points and unlock rewards
-- 📊 **Analytics** - View spending patterns and financial insights
-- 🔒 **PIN Protection** - Secure sensitive actions with a 4-digit PIN
+-  **Balance Tracking** - Track income, expenses, and savings
+-  **Goals System** - Set and achieve financial goals with progress tracking
+-  **Chores** - Complete chores to earn points and rewards
+-  **Finance Quest Game** - Learn financial concepts through interactive gameplay
+-  **Penny AI Assistant** - Get kid-friendly financial advice from Penny (powered by local Ollama)
+-  **Learning Modules** - Access Khan Academy financial literacy content
+-  **Rewards System** - Earn points and unlock rewards
+-  **Analytics** - View spending patterns and financial insights
+-  **PIN Protection** - Secure sensitive actions with a 4-digit PIN
 
 ## Tech Stack
 
